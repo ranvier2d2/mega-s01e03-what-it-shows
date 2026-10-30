@@ -1,0 +1,62 @@
+---
+layout: runbook
+title: '#4471 split · one ticket, three bugs'
+owner: ranvier2d2
+status: open
+reviewed: 2026-10-30
+signature: Bastian Venegas (ranvier2d2)
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const filed = {
+    parser: 'https://github.com/ranvier2d2/mega-s01e03-what-it-shows/issues/1',
+    hint: 'https://github.com/ranvier2d2/mega-s01e03-what-it-shows/issues/2',
+    shift: 'https://github.com/ranvier2d2/mega-s01e03-what-it-shows/issues/3',
+  };
+</script>
+
+[#4471](/kb/incidents/4471) says every report in it is one bug: the parser reads dates month
+first. That holds for most of them, not all. Read by cause instead of by subject line, the
+ticket holds three bugs, and each now has a ticket of its own.
+
+<CauseTable ticket={4471} {filed} />
+
+<Callout kind="warn">
+Fixing the parser closes only the first ticket. The other two keep coming in after the fix.
+</Callout>
+
+## The three bugs
+
+**`parser`: the shared parser reads day-first dates month first.** Every tenant in #4471 writes
+the day first. Any date with a day of twelve or less comes out with day and month swapped: 7 April
+becomes 4 July. Reports from the app, from email and from the booking-v2 form land here.
+
+**`hint`: booking-v3 tells day-first tenants to type month first.** booking-v3 prints
+`MM/DD/YYYY` under its date field. People type what it says, and the form reads the date the
+tenant's way. The input is already wrong, so a fixed parser still flips it. Only reports through
+the booking-v3 form, from the tenants that run it.
+
+**`shift`: dates move by one day.** A swap moves a date by months. These reports say "Tuesday 12
+May" became "Monday 11 May", "every booking in June is one day off", and "Client in Lisbon got
+Tuesday. Client in Toronto got Monday." That is a time zone conversion, not the parser. The desk
+had already read them as a one-day move (`desk-notes.json`); now they count as their own cause.
+
+## How they were counted
+
+- The export lists some reports twice. One id, one report.
+- The cause comes from the report's tenant, its booking form and its channel (`causes.ts`), not
+  from the intake tag. Intake guessed from the reporter's browser; the column "tagged as" shows
+  how often it guessed the other bug.
+- `shift` comes first: a report the desk read as a one-day move is `shift` whatever its tenant.
+
+## Lessons
+
+- Matching on subject line ([decision 0001](/kb/decisions/0001-dedupe-by-subject)) merged three
+  bugs into one ticket. Read the bodies before you merge.
+- "Known" is a claim about one cause. Check it against the table before you close the queue.
+
+<RenderStamp {signature} />
