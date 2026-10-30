@@ -4,7 +4,7 @@ title: '#4471 split · one ticket, three bugs'
 owner: ranvier2d2
 status: open
 reviewed: 2026-10-30
-signature: Bastian Venegas (ranvier2d2)
+signature: v1.eyJzdWIiOiI0ODMiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzM3MjkwOSwiZXhwIjoxNzkzNDU5MzA5fQ.D4x8Gbglm8-EdhdHgM4VvDEBw3lXn6xgOkwQ6R9Iqvs
 ---
 
 <script>
